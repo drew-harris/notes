@@ -1,33 +1,33 @@
-import { BaseHtml } from './BaseHtml';
+import { BaseHtml } from "./BaseHtml";
 
-import { Hono } from 'hono';
+import { Hono } from "hono";
 
 const app = new Hono<{
-	Bindings: {
-		text: KVNamespace;
-	};
+  Bindings: {
+    text: KVNamespace;
+  };
 }>();
 
-app.get('/', async (c) => {
-	const text = await c.env.text.get('bodyText');
-	console.log('text', text);
-	return c.html(
-		<BaseHtml>
-			<div class="border-black border-2 p-2 m-2 min-h-screen">
-				<div
-					dangerouslySetInnerHTML={{
-						__html: text || '',
-					}}
-					class="min-h-screen border border-red-500"
-					data-tiny-editor
-				></div>
-			</div>
-		</BaseHtml>,
-	);
+app.get("/", async (c) => {
+  const text = await c.env.text.get("bodyText");
+  console.log("text", text);
+  return c.html(
+    <BaseHtml>
+      <div class="border-black border-2 p-2 m-2 min-h-screen">
+        <div
+          dangerouslySetInnerHTML={{
+            __html: text || "",
+          }}
+          class="min-h-screen border border-red-500"
+          data-tiny-editor
+        ></div>
+      </div>
+    </BaseHtml>,
+  );
 });
 
-app.get('/script', (c) => {
-	return c.text(`
+app.get("/script", (c) => {
+  return c.text(`
 function debounce(func, wait, immediate) {
     var timeout;
     return function() {
@@ -63,16 +63,16 @@ const debouncedUpload = debounce(upload, 200);
 	`);
 });
 
-app.post('/upload', async (c) => {
-	const bodyText = await c.req.text();
+app.post("/upload", async (c) => {
+  const bodyText = await c.req.text();
 
-	c.env.text.put('bodyText', bodyText);
+  await c.env.text.put("bodyText", bodyText);
 
-	return c.json({
-		bodyText,
-	});
+  return c.json({
+    bodyText,
+  });
 });
 
 export default {
-	fetch: app.fetch,
+  fetch: app.fetch,
 };
